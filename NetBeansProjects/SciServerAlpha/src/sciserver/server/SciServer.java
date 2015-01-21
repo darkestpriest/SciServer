@@ -22,6 +22,10 @@ public class SciServer {
     public static void main(String[] args){
         
         System.out.println("SciServer 0.1.0");
+        System.out.println("Este servidor está en desarrollo, por favor, ejecutar con precaución.");
+        SciSocketServer sciServer=new SciSocketServer();
+        sciServer.runServidor();
+        
         
     }
     
