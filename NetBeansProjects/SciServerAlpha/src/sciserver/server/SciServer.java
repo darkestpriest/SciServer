@@ -21,7 +21,7 @@ public class SciServer {
     
     public static void main(String[] args){
         
-        System.out.println("SciServer 0.1");
+        System.out.println("SciServer 0.1.0");
         
     }
     
