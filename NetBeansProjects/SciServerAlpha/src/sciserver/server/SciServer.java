@@ -14,8 +14,11 @@
 package sciserver.server;
 
 /**
- *
- * @author ingmap
+ *SciServer (Servidor SciLab)
+ * Esta clase la clase "main" un Servidor que permite ejecutar rutinas de Scilab
+ * usando javasci
+ * @version 0.1.0
+ * @author Manuel Pérez P.
  */
 public class SciServer {
     

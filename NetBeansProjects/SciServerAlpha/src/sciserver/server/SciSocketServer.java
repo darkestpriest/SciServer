@@ -13,12 +13,19 @@
  */
 package sciserver.server;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.scilab.modules.javasci.JavasciException;
+import org.scilab.modules.javasci.Scilab;
 
 /**
- *SciServer (Servidor SciLab)
+ *SciSocketServer (Servidor SciLab)
  * Esta clase implementa un Servidor que permite ejecutar rutinas de Scilab
  * usando javasci
  * @version 0.1.0
@@ -89,8 +96,43 @@ class Manejador extends Thread{
     @Override
     public void run(){
 
-        //TO DO: Manejo de scilab
-        System.out.println("Manejador.run()");
+        try{
+            
+             //Escritura de objetos en el cliente
+            ObjectOutputStream os= new ObjectOutputStream(socket.getOutputStream());
+            //Lectura de objetos del cliente
+            ObjectInputStream is=new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+
+            //Objeto leído desde el cliente
+            Object o = is.readObject();
+            /*linea incluye los objetos a evaluar en Scilab
+             * 0. Debe incluir el número de puntos a evaluar
+             * 1. Incluye la creación en Scilab de los puntos pertenecientes a
+             * la variable independiente. Éste objeto puede ser String o un
+             * double[]. Si es String debe ser un comando de creación de una
+             * matriz de nombre t y tamaño igual a n. Si es double[] debe
+             * incluir los puntos de interés a evaluar
+             * 2. Este objeto debe ser un String con el comando a ejecutar en
+             * Scilab. El nombre de la matriz resultante debe ser f
+             */
+            String linea=o.toString();
+            System.out.println("Línea recibida:\n"+linea);
+            
+            //Ejecución de Scilab en el servidor
+            Scilab sci=new Scilab();
+            sci.open();
+            //TO DO: use the String sent  by SciSocketClient
+            sci.close();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JavasciException.InitializationException ex) {
+            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JavasciException ex) {
+            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
 
     }
