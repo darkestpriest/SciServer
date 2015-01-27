@@ -14,6 +14,7 @@
 package sciserver.client;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,8 +32,19 @@ public class TestClient {
         
         try {
             SciSocketClient ssc=new SciSocketClient(ip, port);
-            String recibido=ssc.procesar("t=0:0.001:1;").toString();
-            System.out.println(recibido);
+            Object recibido=ssc.procesar("f=0:0.001:1;");
+            if(recibido instanceof double[]){
+                
+                System.out.println("Recibiendo respuesta");
+                double[] resultado=(double[]) recibido;
+                System.out.println(Arrays.toString(resultado));
+                
+            }else{
+                
+                System.out.println("Error:\n"+recibido);
+                
+            }
+
         } catch (IOException ex) {
             Logger.getLogger(TestClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {

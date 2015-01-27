@@ -1,9 +1,9 @@
 
 
 #JAVASCI2 las líneas anteriores se usan para hacer funcionar javasci1
-	export SCI=/home/ingmap/Scilab/share/scilab
-	#export LIBPATH=/home/ingmap/Scilab/lib/scilab
-	export LIB_PATH=/home/ingmap/Scilab/lib/scilab
-	export LD_LIBRARY_PATH=/home/ingmap/Scilab/lib/scilab:/home/ingmap/Scilab/lib/thirdparty
+	export SCI=/path/to/Scilab/share/scilab
+	#export LIBPATH=/path/to/Scilab/lib/scilab
+	export LIB_PATH=/path/to/Scilab/lib/scilab
+	export LD_LIBRARY_PATH=/path/to/Scilab/lib/scilab:/path/to/Scilab/lib/thirdparty
 	export SCI_DISABLE_TK=1
  	export SCI_JAVA_ENABLE_HEADLESS=1

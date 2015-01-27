@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.scilab.modules.javasci.JavasciException;
 import org.scilab.modules.javasci.Scilab;
+import org.scilab.modules.types.ScilabDouble;
 
 /**
  *SciSocketServer (Servidor SciLab)
@@ -86,10 +87,23 @@ public class SciSocketServer {
 class Manejador extends Thread{
 
     Socket socket;
+    ObjectOutputStream os;
+    ObjectInputStream is;
+    Scilab sci;
+    private String VARIABLE;
     
     public Manejador(Socket s) {
 
-        socket=s;
+        try {
+            socket=s;
+            os= new ObjectOutputStream(socket.getOutputStream());
+            is=new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+            sci=new Scilab();
+        } catch (IOException ex) {
+            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JavasciException.InitializationException ex) {
+            Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
@@ -99,9 +113,9 @@ class Manejador extends Thread{
         try{
             
              //Escritura de objetos en el cliente
-            ObjectOutputStream os= new ObjectOutputStream(socket.getOutputStream());
+            //ObjectOutputStream os= new ObjectOutputStream(socket.getOutputStream());
             //Lectura de objetos del cliente
-            ObjectInputStream is=new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+            //ObjectInputStream is=new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 
             //Objeto leído desde el cliente
             Object o = is.readObject();
@@ -116,13 +130,19 @@ class Manejador extends Thread{
              * Scilab. El nombre de la matriz resultante debe ser f
              */
             String linea=o.toString();
+            double[] resultado;
+            VARIABLE="f";
             System.out.println("Línea recibida:\n"+linea);
             
             //Ejecución de Scilab en el servidor
-            Scilab sci=new Scilab();
             sci.open();
             //TO DO: use the String sent  by SciSocketClient
+            sci.exec(linea);
+            resultado=((ScilabDouble)sci.get(VARIABLE)).getRealPart()[0];
             sci.close();
+            os.writeObject(resultado);
+            os.close();
+            is.close();
             
         } catch (IOException ex) {
             Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
@@ -132,6 +152,12 @@ class Manejador extends Thread{
             Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
         } catch (JavasciException ex) {
             Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                os.writeObject(ex);
+                sci.close();
+            } catch (IOException ex1) {
+                Logger.getLogger(Manejador.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
 
 
